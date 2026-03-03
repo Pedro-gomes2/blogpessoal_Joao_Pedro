@@ -12,3 +12,28 @@ import { PostagemController } from './controllers/postagem.controllers';
     exports:[],
 })
 export class PostagemModule{}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*Cliente faz GET /postagens
+        ↓
+Controller recebe
+        ↓
+Controller chama Service
+        ↓
+Service usa Repository
+        ↓
+Repository consulta banco
+        ↓
+Dados retornam */
