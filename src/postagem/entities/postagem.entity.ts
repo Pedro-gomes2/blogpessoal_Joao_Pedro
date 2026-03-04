@@ -1,5 +1,5 @@
 import { Transform, TransformFnParams } from "class-transformer";
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty, Length } from "class-validator";
 import { Column, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 //modelar  dados
@@ -17,6 +17,7 @@ export class Postagem{
 
     @Transform(({value}: TransformFnParams)=> value?.trim())// remover  o espaço em branco no ini/fim.
     @IsNotEmpty()//força digitação // ate aqui é a validação de dados
+    @Length(10,1000,{message:"O Texto deve ter entre 10 e 1000 caracteres"})
     @Column({length:1000,nullable:false})// varchar(1000) not null // caracteristicas para a coluna do banco de dados 
     texto:string;
 
