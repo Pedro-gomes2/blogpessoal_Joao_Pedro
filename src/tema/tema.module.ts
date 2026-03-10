@@ -9,7 +9,7 @@ import { TemaControle } from "./controller/tema.controller";
     imports:[TypeOrmModule.forFeature([Tema])],
     providers:[TemaService],
     controllers:[TemaControle],
-    exports:[],
+    exports:[TemaService],
 
 })
 export class TemaModule{}

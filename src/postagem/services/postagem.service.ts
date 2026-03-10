@@ -5,51 +5,81 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DeleteResult, ILike, Repository } from "typeorm";
 import { Postagem } from "../entities/postagem.entity";
+import { TemaService } from "../../tema/services/tema.service";
 
 @Injectable()// Permite que outras classes usem esse service.
 //cria funçao para inserir no bancos de dados // indica que a classe pode ser injetada em outros lugares
-export class PostagemService{
+export class PostagemService {
 
     constructor(
         @InjectRepository(Postagem)//informa que queremos o repositório da entidade Postagem.“Me dá acesso à tabela Postagem”
-        private postagemRepository:Repository<Postagem>,//é a classe do TypeORM que fornece métodos prontos para 
+        private postagemRepository: Repository<Postagem>,//é a classe do TypeORM que fornece métodos prontos para 
+        private readonly temaService:TemaService
         // manipular dados no banco
-    ){}
+    ) { }
 
-    async findAll():Promise<Postagem[]>{//Esse método retorna todas as postagens do banco.//Significa que a função vai retornar uma Promise que, quando resolvida, terá um array de objetos do tipo Postagem.
+    async findAll(): Promise<Postagem[]> {//Esse método retorna todas as postagens do banco.//Significa que a função vai retornar uma Promise que, quando resolvida, terá um array de objetos do tipo Postagem.
         // Select * from tb_postagens
-        return await this.postagemRepository.find();
+        return await this.postagemRepository.find({
+            relations: {
+                tema: true,
+                usuario:true
+            }
+        });
+
 
     }
-    async findByid(id:number):Promise<Postagem>{
+    async findByid(id: number): Promise<Postagem> {
         // Select * from tb_postagens where id=?;
-        const postagem = await this.postagemRepository.findOne({where:{id}})
+        const postagem = await this.postagemRepository.findOne({
+            where: {
+                id,
+            }, relations: {
+                tema: true,
+                usuario:true
+            }
+        })
         if (!postagem)
             throw new HttpException('Postagem não Encontrada!', HttpStatus.NOT_FOUND);
         return postagem;
     }
 
-    async findAllByTitulo(titulo:string):Promise<Postagem[]>{
+    async findAllByTitulo(titulo: string): Promise<Postagem[]> {
         // Select * from tb_postagens where  titulo LIKE '%?%';
-        return this.postagemRepository.find({where:{titulo:ILike(`%${titulo}%`)}})
+        return this.postagemRepository.find({
+            where: { titulo: ILike(`%${titulo}%`) ,        
+            },
+            relations: {
+                tema: true,
+                usuario:true
+            }
+        })
+           
+
     }
 
-    async create(postagem: Postagem): Promise<Postagem>{
+    async create(postagem: Postagem): Promise<Postagem> {
+
+        await this.temaService.findById(postagem.tema.id);
+
         // insert into tb_postagens(titulo,texto) values(?,?);
         return await this.postagemRepository.save(postagem);
     }
 
-    
-    async update(postagem: Postagem): Promise<Postagem>{
-        if(!postagem.id || postagem.id <= 0 )
-            throw new HttpException("O ID da Postagem é Invalido!!",HttpStatus.BAD_REQUEST);
+
+    async update(postagem: Postagem): Promise<Postagem> {
+        if (!postagem.id || postagem.id <= 0)
+            throw new HttpException("O ID da Postagem é Invalido!!", HttpStatus.BAD_REQUEST);
+        // checar se a postagem existe
         await this.findByid(postagem.id);
+        // checar se o tema da postagem  existe
+        await this.temaService.findById(postagem.tema.id);
         // update tb_postagens  set titulo= ?, texto =? , data = current_timestamp() where id = ?;            
         return await this.postagemRepository.save(postagem);
-        
+
     }
 
-    async delete(id:number):Promise<DeleteResult>{
+    async delete(id: number): Promise<DeleteResult> {
         await this.findByid(id);
         // delete tb_postagens from id = ?;
         return this.postagemRepository.delete(id);
