@@ -10,13 +10,14 @@ import { Usuario } from './usuario/entities/usuario.entity';
 import { AppController } from './app.controller';
 import { ProdService } from './data/services/prod.service';
 import { ConfigModule } from '@nestjs/config';
+import { DevService } from './data/services/dev.service';
 
 
 @Module({
   imports: [//conectar aplicação com banco de dados 
     ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
-      useClass: ProdService,
+      useClass: DevService,
       imports: [ConfigModule],
     }),
     PostagemModule,
