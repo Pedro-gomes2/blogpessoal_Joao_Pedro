@@ -1,10 +1,15 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards } from "@nestjs/common";
 import { PostagemService } from "../services/postagem.service";
 import { Postagem } from "../entities/postagem.entity";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { JwtAuthGuard } from "../../auth/guard/jewt-auth.guard";
 
 
 //O controller recebe requisições do usuário.
+@ApiTags('Postagem')
+@UseGuards(JwtAuthGuard)
 @Controller("/postagens")//Define rota base
+@ApiBearerAuth()
 export class PostagemController{
     constructor(//Controller → usa service para acessar o banco.
         private readonly postagemService: PostagemService // injeção de dependencia da classe postagem service

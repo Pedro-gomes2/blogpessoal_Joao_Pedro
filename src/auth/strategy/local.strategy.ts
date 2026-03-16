@@ -3,7 +3,7 @@ import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-local";
 import { AuthService } from "../services/auth.service";
 
-
+//validar usuario e senha
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
 

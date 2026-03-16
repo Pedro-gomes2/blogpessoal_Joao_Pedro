@@ -19,8 +19,13 @@ import { Bcrypt } from "./bcrypt/bcript";
         })
 
     ],
+    providers: [
+        Bcrypt, 
+        AuthService,
+        LocalStrategy,
+        JwtStrategy
+    ],
     controllers: [AuthController],
-    providers: [Bcrypt, AuthService, LocalStrategy, JwtStrategy],
     exports: [Bcrypt],
 })
 export class AuthModule {};
