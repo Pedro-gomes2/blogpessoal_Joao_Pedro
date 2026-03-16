@@ -17,7 +17,7 @@ import { DevService } from './data/services/dev.service';
   imports: [//conectar aplicação com banco de dados 
     ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
-      useClass: DevService,
+      useClass: ProdService,
       imports: [ConfigModule],
     }),
     PostagemModule,
